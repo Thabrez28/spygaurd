@@ -1,0 +1,244 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #050b14;
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+}
+
+/* Background */
+
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 20% 30%, #0d2b45 0%, transparent 30%),
+        radial-gradient(circle at 80% 70%, #102a43 0%, transparent 30%),
+        #050b14;
+}
+
+.grid {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(#123047 1px, transparent 1px),
+        linear-gradient(90deg, #123047 1px, transparent 1px);
+
+    background-size: 50px 50px;
+
+    opacity: 0.25;
+}
+
+/* Login Box */
+
+.login-container {
+    width: 420px;
+    padding: 45px;
+
+    background: rgba(8, 18, 30, 0.92);
+
+    border: 1px solid rgba(0, 200, 255, 0.25);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 0 40px rgba(0, 150, 255, 0.12);
+
+    text-align: center;
+
+    backdrop-filter: blur(15px);
+
+    animation: appear 0.8s ease;
+}
+
+/* Logo */
+
+.logo {
+    width: 75px;
+    height: 75px;
+
+    margin: auto;
+    margin-bottom: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 38px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 170, 255, 0.1);
+
+    border: 1px solid rgba(0, 200, 255, 0.4);
+
+    box-shadow: 0 0 25px rgba(0, 180, 255, 0.2);
+}
+
+h1 {
+    font-size: 32px;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    margin-top: 8px;
+    margin-bottom: 20px;
+
+    color: #8fa8bd;
+    font-size: 14px;
+}
+
+/* Security status */
+
+.security-status {
+    display: inline-block;
+
+    padding: 7px 14px;
+
+    margin-bottom: 25px;
+
+    border-radius: 20px;
+
+    background: rgba(0, 200, 120, 0.08);
+
+    color: #65e6a8;
+
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.status-dot {
+    display: inline-block;
+
+    width: 8px;
+    height: 8px;
+
+    margin-right: 6px;
+
+    border-radius: 50%;
+
+    background: #35e68a;
+
+    box-shadow: 0 0 10px #35e68a;
+}
+
+/* Inputs */
+
+.input-group {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #b7c7d6;
+
+    font-size: 13px;
+}
+
+.input-group input {
+    width: 100%;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    border: 1px solid #20394d;
+
+    background: #081522;
+
+    color: white;
+
+    outline: none;
+
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #00aaff;
+
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.15);
+}
+
+.input-group input::placeholder {
+    color: #60788b;
+}
+
+/* Button */
+
+button {
+    width: 100%;
+
+    padding: 14px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        #0077ff,
+        #00b7ff
+    );
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(0, 150, 255, 0.3);
+}
+
+/* Footer */
+
+.footer {
+    margin-top: 25px;
+
+    color: #536a7c;
+
+    font-size: 11px;
+}
+
+/* Animation */
+
+@keyframes appear {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}

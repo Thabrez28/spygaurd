@@ -1,0 +1,95 @@
+<aside class="sidebar">
+
+    <!-- LOGO -->
+    <div class="logo">
+
+        <span>🛡️</span>
+
+        <h2>SpyGuard</h2>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+    <nav>
+
+        <a href="{{ url_for('dashboard') }}"
+           class="{% if request.endpoint == 'dashboard' %}active{% endif %}">
+
+            📊 Dashboard
+
+        </a>
+
+
+        <a href="{{ url_for('scanner') }}"
+           class="{% if request.endpoint == 'scanner' %}active{% endif %}">
+
+            🔍 Threat Scanner
+
+        </a>
+
+
+        <a href="{{ url_for('behavior') }}"
+           class="{% if request.endpoint == 'behavior' or request.endpoint == 'analyze_behavior_route' %}active{% endif %}">
+
+            🧠 Behavior Analysis
+
+        </a>
+
+
+        <a href="{{ url_for('alerts') }}"
+           class="{% if request.endpoint == 'alerts' %}active{% endif %}">
+
+            🚨 Threat Alerts
+
+        </a>
+
+
+        <a href="{{ url_for('logs') }}"
+           class="{% if request.endpoint == 'logs' %}active{% endif %}">
+
+            📋 Security Logs
+
+        </a>
+
+
+        <a href="{{ url_for('reports') }}"
+           class="{% if request.endpoint == 'reports' %}active{% endif %}">
+
+            📄 Reports
+
+        </a>
+
+    </nav>
+
+
+    <!-- SIDEBAR BOTTOM -->
+    <div class="sidebar-bottom">
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            <div>
+
+                <strong>System Secure</strong>
+
+                <small>
+                    SpyGuard monitoring active
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <a href="{{ url_for('logout') }}"
+           class="logout">
+
+            🚪 Logout
+
+        </a>
+
+    </div>
+
+</aside>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - SpyGuard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-container">
+
+
+{% include 'sidebar.html' %}
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="main">
+
+
+        <!-- =================================================
+             TOPBAR
+             ================================================= -->
+
+        <div class="topbar">
+
+
+            <div>
+
+                <h1>
+                    Security Dashboard
+                </h1>
+
+                <p>
+                    Welcome back,
+                    <strong>{{ username }}</strong>
+                </p>
+
+            </div>
+
+
+            <div class="profile">
+
+
+                <div class="notification">
+
+                    🔔
+
+                    {% if active_threats > 0 %}
+
+                    <span>
+                        {{ active_threats }}
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="avatar">
+
+                    {{ username[0]|upper }}
+
+                </div>
+
+
+                <div class="profile-info">
+
+                    <strong>
+                        {{ username }}
+                    </strong>
+
+                    <small>
+                        {{ role|title }}
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             OVERVIEW CARDS
+             ================================================= -->
+
+        <div class="overview">
+
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="card security-card">
+
+                <div class="card-icon">
+                    🛡️
+                </div>
+
+                <span>
+                    System Status
+                </span>
+
+                <h2>
+                    Protected
+                </h2>
+
+                <div class="card-indicator"></div>
+
+                <small>
+                    Monitoring Active
+                </small>
+
+            </div>
+
+
+
+            <!-- THREATS -->
+
+            <div class="card">
+
+                <div class="card-icon">
+                    🚨
+                </div>
+
+                <span>
+                    Active Threats
+                </span>
+
+                <h2>
+                    {{ active_threats }}
+                </h2>
+
+                <small>
+                    Detected
+                </small>
+
+            </div>
+
+
+
+            <!-- SCANS -->
+
+            <div class="card">
+
+                <div class="card-icon">
+                    🔍
+                </div>
+
+                <span>
+                    Scans Completed
+                </span>
+
+                <h2>
+                    {{ total_scans }}
+                </h2>
+
+                <small>
+                    Security scans
+                </small>
+
+            </div>
+
+
+
+            <!-- RISK -->
+
+            <div class="card">
+
+                <div class="card-icon">
+                    ⚠️
+                </div>
+
+                <span>
+                    Latest Risk Score
+                </span>
+
+
+                {% if latest_threat %}
+
+                <h2>
+                    {{ latest_threat.risk_score }}
+                    <span>/100</span>
+                </h2>
+
+                {% else %}
+
+                <h2>
+                    0
+                    <span>/100</span>
+                </h2>
+
+                {% endif %}
+
+
+                <small>
+                    Current assessment
+                </small>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             DASHBOARD GRID
+             ================================================= -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- =================================================
+                 THREAT ASSESSMENT
+                 ================================================= -->
+
+            <div class="panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h3>
+                            Threat Assessment
+                        </h3>
+
+                        <p>
+                            Latest security analysis
+                        </p>
+
+                    </div>
+
+
+                    {% if latest_threat %}
+
+                    <span class="badge">
+
+                        {{ latest_threat.severity|upper }}
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge safe">
+
+                        SAFE
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                {% if latest_threat %}
+
+                <div class="risk-circle"
+                     style="--risk: {{ latest_threat.risk_score }}deg;">
+
+                    <div class="risk-inner">
+
+                        <strong>
+                            {{ latest_threat.risk_score }}
+                        </strong>
+
+                        <span>
+                            RISK SCORE
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="assessment">
+
+                    <strong>
+                        {{ latest_threat.threat_name }}
+                    </strong>
+
+                    <br>
+
+                    {{ latest_threat.description }}
+
+                </div>
+
+
+                {% else %}
+
+                <div class="risk-circle">
+
+                    <div class="risk-inner">
+
+                        <strong>
+                            0
+                        </strong>
+
+                        <span>
+                            RISK SCORE
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="assessment safe-text">
+
+                    No active threat records detected.
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RECENT ACTIVITY
+                 ================================================= -->
+
+            <div class="panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h3>
+                            Recent Security Activity
+                        </h3>
+
+                        <p>
+                            Latest detected activity
+                        </p>
+
+                    </div>
+
+
+                    <a href="{{ url_for('logs') }}"
+                       class="view-btn">
+
+                        View Logs
+
+                    </a>
+
+                </div>
+
+
+
+                {% if latest_threat %}
+
+
+                <div class="activity">
+
+
+                    <div class="activity-icon warning-icon">
+
+                        ⚠
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            {{ latest_threat.threat_name }}
+                        </strong>
+
+                        <small>
+                            {{ latest_threat.description }}
+                        </small>
+
+                    </div>
+
+
+                    <span>
+
+                        Threat
+
+                    </span>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+
+                {% if latest_scan %}
+
+
+                <div class="activity">
+
+
+                    <div class="activity-icon safe-icon">
+
+                        ✓
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Security Scan Completed
+                        </strong>
+
+                        <small>
+                            {{ latest_scan.result }}
+                            — Risk
+                            {{ latest_scan.risk_score }}/100
+                        </small>
+
+                    </div>
+
+
+                    <span>
+
+                        Scan
+
+                    </span>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+
+                {% if not latest_threat and not latest_scan %}
+
+
+                <div class="activity">
+
+                    <div class="activity-icon safe-icon">
+
+                        ✓
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            No Recent Activity
+                        </strong>
+
+                        <small>
+                            Run a security scan to begin.
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+             ================================================= -->
+
+        <div class="panel quick-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Quick Actions
+                    </h3>
+
+                    <p>
+                        Access SpyGuard security tools
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="actions">
+
+
+                <!-- SCANNER -->
+
+                <a href="{{ url_for('scanner') }}"
+                   class="action"
+                   style="text-decoration:none;">
+
+                    <span>
+                        🔍
+                    </span>
+
+                    <strong>
+                        Threat Scanner
+                    </strong>
+
+                    <small>
+                        Run security scan
+                    </small>
+
+                </a>
+
+
+
+                <!-- BEHAVIOR -->
+
+                <a href="{{ url_for('behavior') }}"
+                   class="action"
+                   style="text-decoration:none;">
+
+                    <span>
+                        🧠
+                    </span>
+
+                    <strong>
+                        Behavior Analysis
+                    </strong>
+
+                    <small>
+                        Analyze simulated behavior
+                    </small>
+
+                </a>
+
+
+
+                <!-- ALERTS -->
+
+                <a href="{{ url_for('alerts') }}"
+                   class="action"
+                   style="text-decoration:none;">
+
+                    <span>
+                        🚨
+                    </span>
+
+                    <strong>
+                        Threat Alerts
+                    </strong>
+
+                    <small>
+                        Review security alerts
+                    </small>
+
+                </a>
+
+
+
+                <!-- REPORTS -->
+
+                <a href="{{ url_for('reports') }}"
+                   class="action"
+                   style="text-decoration:none;">
+
+                    <span>
+                        📄
+                    </span>
+
+                    <strong>
+                        Security Reports
+                    </strong>
+
+                    <small>
+                        View security reports
+                    </small>
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer>
+
+            <span>
+                SpyGuard © 2026
+            </span>
+
+            <span>
+                Defensive Security Simulation
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

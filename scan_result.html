@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Scan Result - SpyGuard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <style>
+
+        .result-container {
+            max-width: 950px;
+            margin: auto;
+        }
+
+        .result-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .scan-status {
+            text-align: center;
+            padding: 30px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .scan-status .icon {
+            font-size: 60px;
+        }
+
+        .scan-status h2 {
+            margin: 15px 0 5px;
+        }
+
+        .risk-score {
+            font-size: 55px;
+            font-weight: 800;
+            color: #f59e0b;
+        }
+
+        .details {
+            background: rgba(30, 41, 59, 0.55);
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .details h3 {
+            color: #60a5fa;
+            margin-top: 0;
+        }
+
+        .details p {
+            color: #cbd5e1;
+            line-height: 1.7;
+        }
+
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .category {
+            padding: 16px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            color: #cbd5e1;
+        }
+
+        .notice {
+            padding: 18px;
+            border-left: 4px solid #3b82f6;
+            background: rgba(37, 99, 235, 0.08);
+            border-radius: 8px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-top: 25px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .secondary {
+            background: #1e293b;
+            color: #cbd5e1;
+        }
+
+        @media (max-width: 700px) {
+
+            .category-list {
+                grid-template-columns: 1fr;
+            }
+
+            .result-card {
+                padding: 22px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+{% include 'sidebar.html' %}
+
+<main class="main-content">
+
+    <div class="result-container">
+
+        <h1>🔍 Scan Result</h1>
+
+        <p>
+            SpyGuard security scan report.
+        </p>
+
+        <div class="result-card">
+
+            <div class="scan-status">
+
+                <div class="icon">
+                    🟠
+                </div>
+
+                <h2>
+                    {{ result }}
+                </h2>
+
+                <div class="risk-score">
+                    {{ risk_score }}/100
+                </div>
+
+                <p>
+                    Simulated Risk Score
+                </p>
+
+            </div>
+
+            <div class="details">
+
+                <h3>📊 Scan Information</h3>
+
+                <p>
+                    <strong>Scan Type:</strong>
+                    {{ scan_type }}
+                </p>
+
+                <p>
+                    <strong>Target:</strong>
+                    {{ target }}
+                </p>
+
+            </div>
+
+            <div class="details">
+
+                <h3>🔎 Detection Categories</h3>
+
+                <div class="category-list">
+
+                    <div class="category">
+                        🎤 Microphone Access
+                    </div>
+
+                    <div class="category">
+                        📷 Camera Access
+                    </div>
+
+                    <div class="category">
+                        📁 Sensitive File Access
+                    </div>
+
+                    <div class="category">
+                        🌐 Network Activity
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="details">
+
+                <h3>📝 Scan Details</h3>
+
+                <p>
+                    {{ details }}
+                </p>
+
+            </div>
+
+            <div class="notice">
+
+                <strong>🛡️ Defensive Simulation Notice</strong>
+
+                <br><br>
+
+                The scan uses simulated security events for educational
+                purposes. SpyGuard does not perform unauthorized system
+                surveillance or access private user information.
+
+            </div>
+
+            <div class="actions">
+
+                <a href="{{ url_for('scanner') }}"
+                   class="btn primary">
+
+                    ← Run Another Scan
+
+                </a>
+
+                <a href="{{ url_for('reports') }}"
+                   class="btn secondary">
+
+                    📄 View Reports
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Threat Scanner - SpyGuard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <style>
+
+        .scanner-container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .scanner-header {
+            margin-bottom: 25px;
+        }
+
+        .scanner-header h1 {
+            margin-bottom: 8px;
+        }
+
+        .scanner-header p {
+            color: #94a3b8;
+        }
+
+        .scanner-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .scanner-icon {
+            font-size: 55px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .scanner-description {
+            text-align: center;
+            color: #94a3b8;
+            max-width: 750px;
+            margin: 0 auto 30px;
+            line-height: 1.7;
+        }
+
+        /* =====================================
+           SCAN OPTIONS
+        ===================================== */
+
+        .scan-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            position: relative;
+            background: rgba(30, 41, 59, 0.65);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            padding: 22px;
+            border-radius: 14px;
+            transition: 0.25s ease;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.5);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .option.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.12);
+        }
+
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-header input {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+
+        .option h3 {
+            margin: 0;
+            color: #60a5fa;
+            font-size: 17px;
+        }
+
+        .option p {
+            color: #94a3b8;
+            line-height: 1.5;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        /* =====================================
+           SCAN INFO
+        ===================================== */
+
+        .scan-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(2, 6, 23, 0.65);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            padding: 15px 18px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .scan-info span {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .selected-count {
+            color: #60a5fa !important;
+            font-weight: 700;
+        }
+
+        /* =====================================
+           BUTTON
+        ===================================== */
+
+        .scan-button-container {
+            text-align: center;
+        }
+
+        .scan-button {
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+            background: #1d4ed8;
+        }
+
+        .scan-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =====================================
+           ERROR
+        ===================================== */
+
+        .error-message {
+            margin-bottom: 20px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+        }
+
+        /* =====================================
+           NOTICE
+        ===================================== */
+
+        .notice {
+            margin-top: 25px;
+            padding: 18px;
+            border-left: 4px solid #3b82f6;
+            background: rgba(37, 99, 235, 0.08);
+            border-radius: 8px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        /* =====================================
+           RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 700px) {
+
+            .scan-options {
+                grid-template-columns: 1fr;
+            }
+
+            .scanner-card {
+                padding: 22px;
+            }
+
+            .scan-info {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+{% include 'sidebar.html' %}
+
+
+<main class="main-content">
+
+    <div class="scanner-container">
+
+
+        <!-- ==================================
+             HEADER
+        ================================== -->
+
+        <div class="scanner-header">
+
+            <h1>🔍 Threat Scanner</h1>
+
+            <p>
+                Select simulated behaviors and let SpyGuard
+                analyze the combined threat pattern.
+            </p>
+
+        </div>
+
+
+        <!-- ==================================
+             MAIN SCANNER CARD
+        ================================== -->
+
+        <div class="scanner-card">
+
+
+            <div class="scanner-icon">
+                🛡️
+            </div>
+
+
+            <p class="scanner-description">
+
+                SpyGuard performs a defensive simulation using
+                rule-based analysis and an AI/ML classifier.
+                Select one or more simulated indicators below.
+
+            </p>
+
+
+            <!-- ==================================
+                 ERROR MESSAGE
+            ================================== -->
+
+            {% if error %}
+
+            <div class="error-message">
+
+                ⚠️ {{ error }}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ==================================
+                 SCAN FORM
+            ================================== -->
+
+            <form
+                action="{{ url_for('scan') }}"
+                method="POST"
+                id="scannerForm"
+            >
+
+
+                <div class="scan-options">
+
+
+                    <!-- MICROPHONE -->
+
+                    <label class="option">
+
+                        <div class="option-header">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="microphone"
+                            >
+
+                            <h3>🎤 Microphone Activity</h3>
+
+                        </div>
+
+                        <p>
+                            Simulated unexpected microphone
+                            access behavior.
+                        </p>
+
+                    </label>
+
+
+                    <!-- CAMERA -->
+
+                    <label class="option">
+
+                        <div class="option-header">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="camera"
+                            >
+
+                            <h3>📷 Camera Activity</h3>
+
+                        </div>
+
+                        <p>
+                            Simulated suspicious camera
+                            access behavior.
+                        </p>
+
+                    </label>
+
+
+                    <!-- SENSITIVE FILE -->
+
+                    <label class="option">
+
+                        <div class="option-header">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="sensitive file"
+                            >
+
+                            <h3>📁 Sensitive File Access</h3>
+
+                        </div>
+
+                        <p>
+                            Simulated access to protected
+                            or sensitive files.
+                        </p>
+
+                    </label>
+
+
+                    <!-- NETWORK -->
+
+                    <label class="option">
+
+                        <div class="option-header">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="network"
+                            >
+
+                            <h3>🌐 Suspicious Network Activity</h3>
+
+                        </div>
+
+                        <p>
+                            Simulated unusual network
+                            communication behavior.
+                        </p>
+
+                    </label>
+
+
+                    <!-- KEYLOGGING -->
+
+                    <label class="option">
+
+                        <div class="option-header">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="keylogging"
+                            >
+
+                            <h3>⌨️ Keylogging-Like Behavior</h3>
+
+                        </div>
+
+                        <p>
+                            Simulated behavior resembling
+                            unauthorized keyboard monitoring.
+                        </p>
+
+                    </label>
+
+
+                    <!-- STARTUP -->
+
+                    <label class="option">
+
+                        <div class="option-header">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="startup"
+                            >
+
+                            <h3>⚙️ Startup Behavior</h3>
+
+                        </div>
+
+                        <p>
+                            Simulated persistence-like
+                            startup activity.
+                        </p>
+
+                    </label>
+
+
+                </div>
+
+
+                <!-- ==================================
+                     SELECTION INFORMATION
+                ================================== -->
+
+                <div class="scan-info">
+
+                    <span>
+                        Available indicators:
+                        <strong>6</strong>
+                    </span>
+
+                    <span class="selected-count">
+
+                        Selected:
+                        <strong id="selectedCount">0</strong>
+
+                    </span>
+
+                </div>
+
+
+                <!-- ==================================
+                     BUTTON
+                ================================== -->
+
+                <div class="scan-button-container">
+
+                    <button
+                        type="submit"
+                        class="scan-button"
+                        id="scanButton"
+                    >
+
+                        🔎 Start Security Scan
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+
+            <!-- ==================================
+                 SAFETY NOTICE
+            ================================== -->
+
+            <div class="notice">
+
+                <strong>🛡️ Safe Simulation</strong>
+
+                <br><br>
+
+                This scanner is designed for educational and
+                defensive purposes. It analyzes only simulated
+                behavior selections. It does not access real
+                microphones, cameras, keyboards, passwords,
+                private files, or perform unauthorized
+                surveillance.
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- ==========================================
+     JAVASCRIPT
+========================================== -->
+
+<script>
+
+    const checkboxes =
+        document.querySelectorAll(
+            'input[name="behaviors"]'
+        );
+
+    const selectedCount =
+        document.getElementById(
+            "selectedCount"
+        );
+
+    const scanButton =
+        document.getElementById(
+            "scanButton"
+        );
+
+    const options =
+        document.querySelectorAll(
+            ".option"
+        );
+
+
+    function updateScannerUI() {
+
+        let count = 0;
+
+
+        checkboxes.forEach(function(checkbox) {
+
+            const option =
+                checkbox.closest(".option");
+
+
+            if (checkbox.checked) {
+
+                count++;
+
+                option.classList.add(
+                    "selected"
+                );
+
+            } else {
+
+                option.classList.remove(
+                    "selected"
+                );
+
+            }
+
+        });
+
+
+        selectedCount.textContent =
+            count;
+
+
+        scanButton.disabled =
+            count === 0;
+
+    }
+
+
+    checkboxes.forEach(function(checkbox) {
+
+        checkbox.addEventListener(
+            "change",
+            updateScannerUI
+        );
+
+    });
+
+
+    document
+        .getElementById("scannerForm")
+        .addEventListener(
+            "submit",
+            function(event) {
+
+                let count = 0;
+
+                checkboxes.forEach(
+                    function(checkbox) {
+
+                        if (checkbox.checked) {
+                            count++;
+                        }
+
+                    }
+                );
+
+
+                if (count === 0) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select at least one simulated behavior."
+                    );
+
+                }
+
+            }
+        );
+
+
+    updateScannerUI();
+
+</script>
+
+
+</body>
+
+</html>

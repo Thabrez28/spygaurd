@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Security Reports - SpyGuard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <style>
+
+        .reports-container {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 15px;
+            padding: 22px;
+        }
+
+        .stat-card span {
+            display: block;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card strong {
+            font-size: 32px;
+            color: #f8fafc;
+        }
+
+        .report-section {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .report-section h2 {
+            margin-top: 0;
+            color: #60a5fa;
+        }
+
+        .breakdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .breakdown-item {
+            padding: 18px;
+            border-radius: 10px;
+            background: rgba(30, 41, 59, 0.65);
+        }
+
+        .breakdown-item span {
+            display: block;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-item strong {
+            font-size: 24px;
+        }
+
+        .safe-text {
+            color: #22c55e;
+        }
+
+        .suspicious-text {
+            color: #f59e0b;
+        }
+
+        .high-text {
+            color: #f97316;
+        }
+
+        .critical-text {
+            color: #ef4444;
+        }
+
+        .latest-scan {
+            line-height: 1.8;
+            color: #cbd5e1;
+        }
+
+        .notice {
+            border-left: 4px solid #3b82f6;
+            background: rgba(37, 99, 235, 0.08);
+            padding: 18px;
+            border-radius: 8px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 900px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .breakdown {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .stats-grid,
+            .breakdown {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+{% include 'sidebar.html' %}
+
+<main class="main-content">
+
+    <div class="reports-container">
+
+        <h1>📄 Security Reports</h1>
+
+        <p>
+            Overview of SpyGuard defensive monitoring activity.
+        </p>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <span>Total Scans</span>
+
+                <strong>
+                    {{ total_scans }}
+                </strong>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span>Detected Threats</span>
+
+                <strong>
+                    {{ total_threats }}
+                </strong>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span>Activity Logs</span>
+
+                <strong>
+                    {{ total_logs }}
+                </strong>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span>Suspicious Events</span>
+
+                <strong>
+                    {{ suspicious_events }}
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="report-section">
+
+            <h2>📊 Threat Status Breakdown</h2>
+
+            <div class="breakdown">
+
+                <div class="breakdown-item">
+
+                    <span>Safe</span>
+
+                    <strong class="safe-text">
+                        {{ safe_count }}
+                    </strong>
+
+                </div>
+
+                <div class="breakdown-item">
+
+                    <span>Suspicious</span>
+
+                    <strong class="suspicious-text">
+                        {{ suspicious_count }}
+                    </strong>
+
+                </div>
+
+                <div class="breakdown-item">
+
+                    <span>High Risk</span>
+
+                    <strong class="high-text">
+                        {{ high_risk_count }}
+                    </strong>
+
+                </div>
+
+                <div class="breakdown-item">
+
+                    <span>Critical</span>
+
+                    <strong class="critical-text">
+                        {{ critical_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="report-section">
+
+            <h2>🔎 Latest Scan</h2>
+
+            {% if latest_scan %}
+
+            <div class="latest-scan">
+
+                <p>
+                    <strong>Scan Type:</strong>
+                    {{ latest_scan.scan_type }}
+                </p>
+
+                <p>
+                    <strong>Target:</strong>
+                    {{ latest_scan.target }}
+                </p>
+
+                <p>
+                    <strong>Result:</strong>
+                    {{ latest_scan.result }}
+                </p>
+
+                <p>
+                    <strong>Risk Score:</strong>
+                    {{ latest_scan.risk_score }}/100
+                </p>
+
+                <p>
+                    <strong>Scanned At:</strong>
+                    {{ latest_scan.scanned_at }}
+                </p>
+
+                <p>
+                    <strong>Details:</strong>
+                    {{ latest_scan.details }}
+                </p>
+
+            </div>
+
+            {% else %}
+
+            <p>
+                No scans have been completed yet.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+        <div class="report-section">
+
+            <h2>🧠 Security Analysis</h2>
+
+            <p style="color:#cbd5e1; line-height:1.7;">
+
+                SpyGuard collects simulated security events and organizes
+                them into threat levels. Risk scores and alerts are
+                generated from predefined defensive behavior indicators.
+
+            </p>
+
+        </div>
+
+        <div class="notice">
+
+            <strong>🛡️ Report Safety Notice</strong>
+
+            <br><br>
+
+            This report represents activity from the SpyGuard educational
+            simulation environment. It does not represent unauthorized
+            surveillance or real spyware activity.
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Behavior Analysis - SpyGuard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <style>
+        /* ==========================================
+           BEHAVIOR ANALYSIS PAGE
+           ========================================== */
+
+        .behavior-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .page-intro {
+            margin-bottom: 30px;
+        }
+
+        .page-intro h1 {
+            margin-bottom: 8px;
+        }
+
+        .page-intro p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* Analysis Card */
+
+        .analysis-card {
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid rgba(59, 130, 246, 0.20);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .section-title span {
+            font-size: 24px;
+        }
+
+        .section-description {
+            color: #94a3b8;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        /* Behavior Grid */
+
+        .behavior-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .behavior-option {
+            position: relative;
+        }
+
+        .behavior-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .behavior-label {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            min-height: 90px;
+
+            background: rgba(30, 41, 59, 0.65);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 12px;
+
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .behavior-label:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.55);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .behavior-option input:checked + .behavior-label {
+            border-color: #3b82f6;
+            background: rgba(37, 99, 235, 0.12);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.12);
+        }
+
+        .behavior-icon {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+            background: rgba(59, 130, 246, 0.12);
+
+            font-size: 24px;
+        }
+
+        .behavior-info {
+            flex: 1;
+        }
+
+        .behavior-info h3 {
+            margin: 0 0 5px;
+            color: #e2e8f0;
+            font-size: 16px;
+        }
+
+        .behavior-info p {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .checkbox-indicator {
+            width: 22px;
+            height: 22px;
+
+            border: 2px solid #64748b;
+            border-radius: 6px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            transition: all 0.2s ease;
+        }
+
+        .behavior-option input:checked
+        + .behavior-label
+        .checkbox-indicator {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .checkbox-indicator::after {
+            content: "✓";
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            opacity: 0;
+        }
+
+        .behavior-option input:checked
+        + .behavior-label
+        .checkbox-indicator::after {
+            opacity: 1;
+        }
+
+        /* Analyze Button */
+
+        .analyze-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 16px 24px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: linear-gradient(
+                135deg,
+                #2563eb,
+                #1d4ed8
+            );
+
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: all 0.25s ease;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .analyze-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Info Box */
+
+        .simulation-notice {
+            margin-top: 25px;
+            padding: 18px 20px;
+
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+
+            background: rgba(59, 130, 246, 0.08);
+            color: #94a3b8;
+
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .simulation-notice strong {
+            color: #60a5fa;
+        }
+
+        /* Empty Selection Message */
+
+        .selection-message {
+            display: none;
+            margin-top: 15px;
+            padding: 12px 15px;
+
+            border-radius: 8px;
+
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+
+            color: #fca5a5;
+            font-size: 13px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 800px) {
+
+            .behavior-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==========================================
+         SIDEBAR
+         ========================================== -->
+
+    {% include 'sidebar.html' %}
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+         ========================================== -->
+
+    <main class="main-content">
+
+        <div class="behavior-container">
+
+            <!-- Page Header -->
+
+            <div class="page-intro">
+
+                <h1>🧠 Behavior Analysis</h1>
+
+                <p>
+                    Analyze simulated system behaviors and identify
+                    combinations of indicators that may represent
+                    spyware-like activity.
+                </p>
+
+            </div>
+
+
+            <!-- Analysis Card -->
+
+            <div class="analysis-card">
+
+                <div class="section-title">
+                    <span>🔍</span>
+                    <h2>Select Simulated Behaviors</h2>
+                </div>
+
+                <p class="section-description">
+                    Select one or more simulated security indicators.
+                    SpyGuard will calculate a defensive risk score
+                    based on the selected combination.
+                </p>
+
+
+                <!-- ==========================================
+                     BEHAVIOR FORM
+                     ========================================== -->
+
+                <form method="POST"
+                      action="{{ url_for('analyze_behavior_route') }}"
+                      id="behaviorForm">
+
+
+                    <div class="behavior-grid">
+
+                        <!-- MICROPHONE -->
+
+                        <div class="behavior-option">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="microphone"
+                                id="microphone"
+                            >
+
+                            <label
+                                class="behavior-label"
+                                for="microphone"
+                            >
+
+                                <div class="behavior-icon">
+                                    🎙️
+                                </div>
+
+                                <div class="behavior-info">
+
+                                    <h3>
+                                        Microphone Access
+                                    </h3>
+
+                                    <p>
+                                        Simulated unexpected
+                                        microphone access.
+                                    </p>
+
+                                </div>
+
+                                <div class="checkbox-indicator"></div>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- CAMERA -->
+
+                        <div class="behavior-option">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="camera"
+                                id="camera"
+                            >
+
+                            <label
+                                class="behavior-label"
+                                for="camera"
+                            >
+
+                                <div class="behavior-icon">
+                                    📷
+                                </div>
+
+                                <div class="behavior-info">
+
+                                    <h3>
+                                        Camera Access
+                                    </h3>
+
+                                    <p>
+                                        Simulated unexpected
+                                        camera access.
+                                    </p>
+
+                                </div>
+
+                                <div class="checkbox-indicator"></div>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- SENSITIVE FILE -->
+
+                        <div class="behavior-option">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="sensitive file"
+                                id="sensitive-file"
+                            >
+
+                            <label
+                                class="behavior-label"
+                                for="sensitive-file"
+                            >
+
+                                <div class="behavior-icon">
+                                    📁
+                                </div>
+
+                                <div class="behavior-info">
+
+                                    <h3>
+                                        Sensitive File Access
+                                    </h3>
+
+                                    <p>
+                                        Simulated access to a
+                                        sensitive test file.
+                                    </p>
+
+                                </div>
+
+                                <div class="checkbox-indicator"></div>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- NETWORK -->
+
+                        <div class="behavior-option">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="network"
+                                id="network"
+                            >
+
+                            <label
+                                class="behavior-label"
+                                for="network"
+                            >
+
+                                <div class="behavior-icon">
+                                    🌐
+                                </div>
+
+                                <div class="behavior-info">
+
+                                    <h3>
+                                        Suspicious Network Activity
+                                    </h3>
+
+                                    <p>
+                                        Simulated unusual network
+                                        communication.
+                                    </p>
+
+                                </div>
+
+                                <div class="checkbox-indicator"></div>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- STARTUP -->
+
+                        <div class="behavior-option">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="startup"
+                                id="startup"
+                            >
+
+                            <label
+                                class="behavior-label"
+                                for="startup"
+                            >
+
+                                <div class="behavior-icon">
+                                    ⚙️
+                                </div>
+
+                                <div class="behavior-info">
+
+                                    <h3>
+                                        Startup Behavior
+                                    </h3>
+
+                                    <p>
+                                        Simulated persistence-like
+                                        startup activity.
+                                    </p>
+
+                                </div>
+
+                                <div class="checkbox-indicator"></div>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- KEYLOGGING -->
+
+                        <div class="behavior-option">
+
+                            <input
+                                type="checkbox"
+                                name="behaviors"
+                                value="keylogging"
+                                id="keylogging"
+                            >
+
+                            <label
+                                class="behavior-label"
+                                for="keylogging"
+                            >
+
+                                <div class="behavior-icon">
+                                    ⌨️
+                                </div>
+
+                                <div class="behavior-info">
+
+                                    <h3>
+                                        Keylogging-Like Behavior
+                                    </h3>
+
+                                    <p>
+                                        Simulated keylogging-like
+                                        activity for analysis.
+                                    </p>
+
+                                </div>
+
+                                <div class="checkbox-indicator"></div>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Selection Error -->
+
+                    <div
+                        class="selection-message"
+                        id="selectionMessage"
+                    >
+                        Please select at least one simulated
+                        behavior before starting the analysis.
+                    </div>
+
+
+                    <!-- Analyze -->
+
+                    <div class="analyze-section">
+
+                        <button
+                            type="submit"
+                            class="analyze-btn"
+                        >
+                            🧠 Analyze Selected Behavior
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <!-- Safety Notice -->
+
+                <div class="simulation-notice">
+
+                    <strong>🛡️ Defensive Simulation:</strong>
+
+                    SpyGuard does not access your real microphone,
+                    camera, keyboard, private files, passwords,
+                    or personal data. All indicators on this page
+                    are simulated test behaviors used only for
+                    defensive threat analysis.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+         ========================================== -->
+
+    <script>
+
+        const form = document.getElementById("behaviorForm");
+
+        const message =
+            document.getElementById("selectionMessage");
+
+
+        form.addEventListener("submit", function(event) {
+
+            const selected =
+                document.querySelectorAll(
+                    'input[name="behaviors"]:checked'
+                );
+
+            if (selected.length === 0) {
+
+                event.preventDefault();
+
+                message.style.display = "block";
+
+                message.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+            } else {
+
+                message.style.display = "none";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>
